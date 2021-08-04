@@ -5,7 +5,7 @@ class CreateMeals < ActiveRecord::Migration[6.0]
       t.string :category
       t.string :area
       t.text :instructions
-      t.bytea :image
+      t.binary :image
       t.string :tags
       t.string :ingredients
       t.string :source
