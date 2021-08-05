@@ -1,5 +1,5 @@
 class MealsController < ApplicationController
-  
+
   def index
   end
   
@@ -7,6 +7,8 @@ class MealsController < ApplicationController
   end
 
   def create
+    #Use method to identify provider, and parse data accordingly
+    binding.pry
   end
 
   def update
@@ -14,4 +16,11 @@ class MealsController < ApplicationController
 
   def destroy
   end
+
+  private
+
+  def meal_params
+    params.require(:meals).permit(*args)
+  end
+
 end
