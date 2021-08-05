@@ -8,6 +8,9 @@ class MealsController < ApplicationController
 
   def create
     #Use method to identify provider, and parse data accordingly
+    if getProvider.match(/www.themealdb.com/)
+      
+    end
     binding.pry
   end
 
@@ -19,8 +22,11 @@ class MealsController < ApplicationController
 
   private
 
-  def meal_params
-    params.require(:meals).permit(*args)
+  def meal_params(*args)
+    params.require(:meals)[0].permit(*args)
   end
-
+  def getProvider()
+    params.require(:provider)
+  end
+  
 end
