@@ -9,9 +9,9 @@ class MealsController < ApplicationController
   def create
     #Use method to identify provider, and parse data accordingly
     if getProvider.match(/www.themealdb.com/)
-      
+      Meal.parseMealsDB(meal_params(Meal.MealsDB_params))
     end
-    binding.pry
+    # binding.pry
   end
 
   def update
