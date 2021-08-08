@@ -1,10 +1,4 @@
 class Meal < ApplicationRecord
-   
-    
-    def parseIngredients(payload)
-        binding.pry
-        #params[:meals][0].each_pair do |k,v|
-    end
     
     def self.MealsDB_params
         [:strMeal, :strCategory, :strArea, :strInstructions,:strTags,:strYoutube,:strIngredient1,:strIngredient2,:strIngredient3,:strIngredient4,:strIngredient5,:strIngredient6,:strIngredient7,:strIngredient8,:strIngredient9,:strIngredien10,
@@ -20,6 +14,7 @@ class Meal < ApplicationRecord
         instructions=payload[:strInstructions].split(/[\r][\n]*/).reject { |s| s.nil? || s.strip.empty? } #Splits paragraph instruction into steps, broken down by \r\n combination
         tags=payload[:strTags].split(/,/)
         #videoLink=payload[:strYoutube]
+        #image=payload[:]
         ingredientsList={}
         ingredients=[]
         amounts=[]
@@ -30,18 +25,12 @@ class Meal < ApplicationRecord
                 amounts.push(v)
             end
         end
-        (0..20).each do |i|
+        (0...20).each do |i|
             break if ingredients[i].empty?
             ingredientsList.store(ingredients[i],amounts[i])
         end
         sourceURL=payload[:strSource]
-        binding.pry
-        Meal.new(:title => title, :category => category, :area => area, :source => sourceURL, :instructions => instructions, :tags => tags, :ingredients => ingredientsList )
+        newMeal = Meal.new(:title => title, :category => category, :area => area, :source => sourceURL, :instructions => instructions, :tags => tags, :ingredients => ingredientsList )
+        
     end
 end
-
-# :strMeal
-# :strCategory
-# :strArea
-# :strInstructions
-

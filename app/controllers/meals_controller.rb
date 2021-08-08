@@ -11,7 +11,7 @@ class MealsController < ApplicationController
     if getProvider.match(/www.themealdb.com/)
       Meal.parseMealsDB(meal_params(Meal.MealsDB_params))
     end
-    # binding.pry
+    
   end
 
   def update
