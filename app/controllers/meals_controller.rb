@@ -9,8 +9,15 @@ class MealsController < ApplicationController
 
   def discover #placeholder - Used to find recipes from 3rd parties.
     testing_API_KEY=1
-    url = "https://www.themealdb.com/api/json/v1/#{testing_API_KEY}/random.php"
-    response = Net::HTTP.get(URI(url))
+    url_random =   "https://www.themealdb.com/api/json/v1/#{testing_API_KEY}/random.php"
+    url_by_title = "https://www.themealdb.com/api/json/v1/#{testing_API_KEY}/search.php?s=#{`Clam chowder`}"
+    url_by_main_ingredient = "www.themealdb.com/api/json/v1/#{testing_API_KEY}/filter.php?i=#{`chicken_breast`}"
+    #=> {meals:[ {"strMeal"}, {"strMeal"}, {"strMeal"} ]}
+
+    url_list_all_category = "www.themealdb.com/api/json/v1/#{testing_API_KEY}/list.php?c=list"
+    #=> {meals:[ {"strCategory"}, {"strCategory"}, {"strCategory"} ]}
+
+    response = Net::HTTP.get(URI(url_random))
     payload = JSON.parse(response)
     payload["provider"]="www.themealdb.com"
     ## mealDB parser then render to front end
