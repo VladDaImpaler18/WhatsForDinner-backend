@@ -8,29 +8,30 @@ class Meal < ApplicationRecord
     end
     
     def self.parseMealsDB(payload)
-        title=payload[:strMeal]
-        category=payload[:strCategory]
-        area=payload[:strArea]
-        instructions=payload[:strInstructions].split(/[\r][\n]*/).reject { |s| s.nil? || s.strip.empty? } #Splits paragraph instruction into steps, broken down by \r\n combination
-        tags=payload[:strTags].split(/,/)
+        mealObj={}
+        mealObj["title"]=payload[:strMeal]
+        mealObj["category"]=payload[:strCategory]
+        mealObj["area"]=payload[:strArea]
+        mealObj["instructions"]=payload[:strInstructions].split(/[\r][\n]*/).reject { |s| s.nil? || s.strip.empty? } #Splits paragraph instruction into steps, broken down by \r\n combination
+        mealObj["tags"]=payload[:strTags].split(/,/) unless payload[:strTags].nil?
         #videoLink=payload[:strYoutube]
         #image=payload[:]
-        ingredientsList={}
-        ingredients=[]
+        ingredients={}
+        materials=[]
         amounts=[]
         payload.each_pair do |k,v|
             if k.include? "Ingredient"
-                ingredients.push(v)
+                materials.push(v)
             elsif k.include? "Measure"
                 amounts.push(v)
             end
         end
-        (0...20).each do |i|
-            break if ingredients[i].empty?
-            ingredientsList.store(ingredients[i],amounts[i])
+        (0..20).each do |i|
+            break if materials[i].empty?
+            ingredients.store(materials[i],amounts[i])
         end
-        sourceURL=payload[:strSource]
-        newMeal = Meal.new(:title => title, :category => category, :area => area, :source => sourceURL, :instructions => instructions, :tags => tags, :ingredients => ingredientsList )
-        
+        mealObj["ingredients"] = ingredients
+        mealObj["source"]=payload[:strSource]
+        return mealObj
     end
 end
