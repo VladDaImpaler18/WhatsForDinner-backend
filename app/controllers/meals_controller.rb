@@ -7,21 +7,30 @@ class MealsController < ApplicationController
   def show
   end
 
-  def create
-    # url = "https://www.themealdb.com/api/json/v1/1/random.php"
-    # response = Net::HTTP.get(URI(url))
-    # payload = JSON.parse(response)
-    # payload["provider"]="www.themealdb.com"
-    #Use method to identify provider, and parse data accordingly
-    if getProvider.match(/www.themealdb.com/)
-      Meal.parseMealsDB(meal_params(Meal.MealsDB_params))
-    end
-    
-    
-    binding.pry
+  def discover #placeholder - Used to find recipes from 3rd parties.
+    testing_API_KEY=1
+    url = "https://www.themealdb.com/api/json/v1/#{testing_API_KEY}/random.php"
+    response = Net::HTTP.get(URI(url))
+    payload = JSON.parse(response)
+    payload["provider"]="www.themealdb.com"
+    ## mealDB parser then render to front end
+    mealAttr = Meal.parseMealsDB(meal_params(Meal.MealsDB_params))
+    newMeal = Meal.new(mealAttr)
+    # Front end allows changes then saves it in our format to controller#create
+    render json: newMeal
+  end
+
+  def create  
+    newMeal = Meal.new(meal_params(title,category,area,instructions,tags,ingredients,source))
+    # if newMeal.save
+    #   render json: newMeal
+    # else
+    #   render plain: "Error creating meal"
   end
 
   def update
+    mealObj = Meal.find_by(:id=>meal_params(:id))
+    mealObj.update(meal_params(title,category,area,instructions,tags,ingredients,source))
   end
 
   def destroy
