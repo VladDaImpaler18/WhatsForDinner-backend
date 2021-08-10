@@ -1,6 +1,8 @@
 class Meal < ApplicationRecord
     validates :title, presence: true
-    
+    validates :title, uniqueness: true
+    validates_with MealsValidator, fields: [:instructions, :ingredients]
+
     
     def self.MealsDB_params
         [:strMeal, :strCategory, :strArea, :strInstructions,:strTags,:strYoutube,:strIngredient1,:strIngredient2,:strIngredient3,:strIngredient4,:strIngredient5,:strIngredient6,:strIngredient7,:strIngredient8,:strIngredient9,:strIngredien10,
