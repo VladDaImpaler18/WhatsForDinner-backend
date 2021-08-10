@@ -5,6 +5,12 @@ class MealsController < ApplicationController
   end
   
   def show
+    mealObj = Meal.find_by(meal_params(:id))
+    if updatedMealObj.nil? 
+      render json: {message: "Record with ID: #{meal_params(:id).values.first} doesn't exist"}
+    else
+      render json: mealObj
+    end
   end
 
   def discover #placeholder - Used to find recipes from 3rd parties.
@@ -33,14 +39,29 @@ class MealsController < ApplicationController
       render json: newMeal
     else
       render json: newMeal.errors.messages
+    end
   end
 
   def update
-    mealObj = Meal.find_by(:id=>meal_params(:id))
-    mealObj.update(meal_params(:title,:category,:area,:source,:instructions => [],:tags => [],:ingredients => {}))
+    updatedMealObj = Meal.find_by(meal_params(:id))
+    if updatedMealObj.nil? 
+      render json: {message: "Record with ID: #{meal_params(:id).values.first} doesn't exist"}
+    elsif updatedMealObj.update(meal_params(:title,:category,:area,:source,:instructions => [],:tags => [],:ingredients => {}))
+      render json: updatedMealObj
+    else
+      reder json: updatedMealObj.errors.messages
+    end
   end
 
   def destroy
+    mealObj = Meal.find_by(meal_params(:id))
+    if mealObj.nil?
+      render json: {message: "Record with ID: #{meal_params(:id).values.first} doesn't exist"}
+    elsif mealObj.delete
+      render json: mealObj
+    else
+      render json: mealObj.errors.messages
+    end
   end
 
   private
