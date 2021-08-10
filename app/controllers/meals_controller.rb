@@ -27,17 +27,17 @@ class MealsController < ApplicationController
     render json: newMeal
   end
 
-  def create  
-    newMeal = Meal.new(meal_params(title,category,area,instructions,tags,ingredients,source))
-    # if newMeal.save
-    #   render json: newMeal
-    # else
-    #   render plain: "Error creating meal"
+  def create
+    newMeal = Meal.new(meal_params(:title,:category,:area,:source,:instructions => [],:tags => [],:ingredients => {}))
+    if newMeal.save
+      render json: newMeal
+    else
+      render json: newMeal.errors.messages
   end
 
   def update
     mealObj = Meal.find_by(:id=>meal_params(:id))
-    mealObj.update(meal_params(title,category,area,instructions,tags,ingredients,source))
+    mealObj.update(meal_params(:title,:category,:area,:source,:instructions => [],:tags => [],:ingredients => {}))
   end
 
   def destroy
@@ -46,7 +46,7 @@ class MealsController < ApplicationController
   private
 
   def meal_params(*args)
-    params.require(:meals)[0].permit(*args)
+    params.require(:meals)[0].permit(args)
   end
   def getProvider()
     params.require(:provider)
