@@ -22,18 +22,29 @@ class FoodNetwork_Scraper
         begin
             # Fetch and parse HTML document
             doc = Nokogiri::HTML(URI.open(url))
-            # Ingredients
-            ingredients_path = 'span.o-Ingredients__a-Ingredient--CheckboxLabel'
-            doc.css(ingredients_path).each { |el| ingredients << el.text.strip unless el.text === "Deselect All" }
             
-            # Directions
-            directions_path = 'ol li.o-Method__m-Step'
-            doc.css(directions_path).each { |el| directions << el.text.strip }
-
             # Title 
             title_path = 'span.o-AssetTitle__a-HeadlineText'
             title = doc.css(title_path).text.strip
+            
+            # Category
 
+            # Area
+
+            # Instructions
+            instructions_path = 'ol li.o-Method__m-Step'
+            doc.css(instructions_path).each { |el| instructions << el.text.strip }
+
+            # Tags
+            
+            # Image
+            img_path = 'div.o-RecipeLead__m-RecipeMedia div.m-RecipeMedia__m-MediaBlock.m-MediaBlock div.m-MediaBlock__m-MediaWrap img.m-MediaBlock__a-Image.a-Image'
+            img_url= doc.css(img_path).first.map { |k,v| img_url = v.match(/(food|cook).fnr.*\.jpg/).to_s if k==="src" }.compact.first
+            
+            # Ingredients (Materials + Amounts)
+            ingredients_path = 'span.o-Ingredients__a-Ingredient--CheckboxLabel'
+            doc.css(ingredients_path).each { |el| ingredients << el.text.strip unless el.text === "Deselect All" }
+            
             # Description
             desc_path = 'section.o-AssetDescription'
             description = doc.css(desc_path).text.strip
@@ -42,20 +53,17 @@ class FoodNetwork_Scraper
             info_path = 'span.o-RecipeInfo__a-Description'
             difficulty, total_time, active_time, servings = doc.css(info_path).map { |el| el.text.strip }.uniq
             
-            # Image
-            img_path = 'div.o-RecipeLead__m-RecipeMedia div.m-RecipeMedia__m-MediaBlock.m-MediaBlock div.m-MediaBlock__m-MediaWrap img.m-MediaBlock__a-Image.a-Image'
-            img_url= doc.css(img_path).first.map { |k,v| img_url = v.match(/(food|cook).fnr.*\.jpg/).to_s if k==="src" }.compact.first
-
             @payload = { 
                 :title => title, 
-                :description => description, 
+                :instructions => instructions, 
                 :ingredients => ingredients, 
                 :directions => directions,
                 :image => img_url,
                 :difficulty => difficulty,
                 :total_time => total_time,
                 :active_time => active_time,
-                :servings => servings
+                :servings => servings,
+                :source => url
             }
         rescue => e
             set_error("Unexpected error! #{e.to_s.split("\n").first}")
