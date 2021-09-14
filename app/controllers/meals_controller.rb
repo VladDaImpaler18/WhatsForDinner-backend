@@ -13,10 +13,11 @@ class MealsController < ApplicationController
     end
   end
 
-  def discover #placeholder - Used to find recipes from 3rd parties.
+  def discover #placeholder - Used to find recipes from 3rd parties. Search using other's API
     testing_API_KEY=1
     url_random =   "https://www.themealdb.com/api/json/v1/#{testing_API_KEY}/random.php"
     url_by_title = "https://www.themealdb.com/api/json/v1/#{testing_API_KEY}/search.php?s=#{`Clam chowder`}"
+    
     url_by_main_ingredient = "www.themealdb.com/api/json/v1/#{testing_API_KEY}/filter.php?i=#{`chicken_breast`}"
     #=> {meals:[ {"strMeal"}, {"strMeal"}, {"strMeal"} ]}
 
@@ -31,6 +32,16 @@ class MealsController < ApplicationController
     newMeal = Meal.new(mealAttr)
     # Front end allows changes then saves it in our format to controller#create
     render json: newMeal
+  end
+
+  def import #import from website, :scrape => [FoodNetwork]
+    meal_data = FoodNetwork_Scraper.new(url)
+    
+    if meal_data.valid?
+      render json: meal_data
+    else
+      render json: meal_data.error
+    end
   end
 
   def create
