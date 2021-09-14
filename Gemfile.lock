@@ -156,7 +156,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   listen (~> 3.2)
   nokogiri
-  open-uri
+  open-uri (~> 0.1.0)
   pg (>= 0.18, < 2.0)
   pry
   puma (~> 4.1)

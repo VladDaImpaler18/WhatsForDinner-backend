@@ -17,7 +17,7 @@ gem 'puma', '~> 4.1'
 # gem 'bcrypt', '~> 3.1.7'
 
 gem 'nokogiri'
-gem 'open-uri'
+gem 'open-uri', '~> 0.1.0'
 
 # devise token authentification for api - user authentification
 # gem 'devise_token_auth'
