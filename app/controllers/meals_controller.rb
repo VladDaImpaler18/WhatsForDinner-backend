@@ -35,8 +35,9 @@ class MealsController < ApplicationController
   end
 
   def import #import from website, :scrape => [FoodNetwork]
-    meal_data = FoodNetwork_Scraper.new(url)
-    
+    # url = "https://www.foodnetwork.com/recipes/puerto-rican-style-stuffed-flank-steak-5307440"
+    # meal_data = FoodNetwork_Scraper.new(url)
+    binding.pry
     if meal_data.valid?
       render json: meal_data
     else
