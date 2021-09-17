@@ -1,5 +1,8 @@
-require 'net/http'
+# require 'net/http'
+
+require "scrapers/food_network"
 class MealsController < ApplicationController
+  extend Scrapers::FoodNetwork
 
   def index
   end
@@ -24,7 +27,7 @@ class MealsController < ApplicationController
     url_list_all_category = "www.themealdb.com/api/json/v1/#{testing_API_KEY}/list.php?c=list"
     #=> {meals:[ {"strCategory"}, {"strCategory"}, {"strCategory"} ]}
 
-    response = Net::HTTP.get(URI(url_random))
+    # response = Net::HTTP.get(URI(url_random))
     payload = JSON.parse(response)
     payload["provider"]="www.themealdb.com"
     ## mealDB parser then render to front end
@@ -36,7 +39,8 @@ class MealsController < ApplicationController
 
   def import #import from website, :scrape => [FoodNetwork]
     # url = "https://www.foodnetwork.com/recipes/puerto-rican-style-stuffed-flank-steak-5307440"
-    # meal_data = FoodNetwork_Scraper.new(url)
+    # meal_data = FoodNetwork.new(url)
+    meal_data = 
     binding.pry
     if meal_data.valid?
       render json: meal_data
