@@ -1,4 +1,6 @@
-require 'net/http'
+# require 'net/http'
+
+require "scrapers/food_network"
 class MealsController < ApplicationController
 
   def index
@@ -13,17 +15,18 @@ class MealsController < ApplicationController
     end
   end
 
-  def discover #placeholder - Used to find recipes from 3rd parties.
+  def discover #placeholder - Used to find recipes from 3rd parties. Search using other's API
     testing_API_KEY=1
     url_random =   "https://www.themealdb.com/api/json/v1/#{testing_API_KEY}/random.php"
     url_by_title = "https://www.themealdb.com/api/json/v1/#{testing_API_KEY}/search.php?s=#{`Clam chowder`}"
+    
     url_by_main_ingredient = "www.themealdb.com/api/json/v1/#{testing_API_KEY}/filter.php?i=#{`chicken_breast`}"
     #=> {meals:[ {"strMeal"}, {"strMeal"}, {"strMeal"} ]}
 
     url_list_all_category = "www.themealdb.com/api/json/v1/#{testing_API_KEY}/list.php?c=list"
     #=> {meals:[ {"strCategory"}, {"strCategory"}, {"strCategory"} ]}
 
-    response = Net::HTTP.get(URI(url_random))
+    # response = Net::HTTP.get(URI(url_random))
     payload = JSON.parse(response)
     payload["provider"]="www.themealdb.com"
     ## mealDB parser then render to front end
@@ -31,6 +34,19 @@ class MealsController < ApplicationController
     newMeal = Meal.new(mealAttr)
     # Front end allows changes then saves it in our format to controller#create
     render json: newMeal
+  end
+
+  def import #import from website, :scrape => [FoodNetwork]
+    url = params.require(:url)
+    data = Scrapers::FoodNetwork.grab(url)
+    args={}
+    Meal.new.attributes.symbolize_keys.each { |k,v| args[k]=data[k]}
+    imported_meal = Meal.new(args)
+    if imported_meal.valid?
+      render json: imported_meal
+    else
+      render json: imported_meal.errors.messages
+    end
   end
 
   def create
