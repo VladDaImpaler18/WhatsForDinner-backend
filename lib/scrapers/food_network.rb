@@ -3,23 +3,23 @@ module Scrapers
     module FoodNetwork
     attr_accessor :payload, :error
 
-        def grab(url)
+        def self.grab(url)
             check_url(url)
             scrape_data(url)
             @payload
         end
 
-        def valid?
-            @error.empty?
-        end
+        # def valid?
+        #     @error.empty?
+        # end
 
-    private
+    protected
 
-        def scrape_data(url)
+        def self.scrape_data(url)
             #ingredients will be entire line, later it will be broken to a hash
             ingredients = []
+            instructions = []
             directions = []
-            
             begin
                 # Fetch and parse HTML document
                 doc = Nokogiri::HTML(URI.open(url))
@@ -37,7 +37,7 @@ module Scrapers
                 doc.css(instructions_path).each { |el| instructions << el.text.strip }
 
                 # Tags
-                
+
                 # Image
                 img_path = 'div.o-RecipeLead__m-RecipeMedia div.m-RecipeMedia__m-MediaBlock.m-MediaBlock div.m-MediaBlock__m-MediaWrap img.m-MediaBlock__a-Image.a-Image'
                 img_url= doc.css(img_path).first.map { |k,v| img_url = v.match(/(food|cook).fnr.*\.jpg/).to_s if k==="src" }.compact.first
@@ -71,12 +71,12 @@ module Scrapers
             end
         end
 
-        def set_error(error_msg)
+        def self.set_error(error_msg)
             @error = error_msg
             puts @error
         end
 
-        def check_url(url)
+        def self.check_url(url)
         raise "InputNeeded" if url.empty?
         raise "MustBeString" unless url.class == String
         end
