@@ -2,7 +2,6 @@
 
 require "scrapers/food_network"
 class MealsController < ApplicationController
-  extend Scrapers::FoodNetwork
 
   def index
   end
@@ -38,14 +37,15 @@ class MealsController < ApplicationController
   end
 
   def import #import from website, :scrape => [FoodNetwork]
-    # url = "https://www.foodnetwork.com/recipes/puerto-rican-style-stuffed-flank-steak-5307440"
-    # meal_data = FoodNetwork.new(url)
-    meal_data = 
-    binding.pry
-    if meal_data.valid?
-      render json: meal_data
+    url = params.require(:url)
+    data = Scrapers::FoodNetwork.grab(url)
+    args={}
+    Meal.new.attributes.symbolize_keys.each { |k,v| args[k]=data[k]}
+    imported_meal = Meal.new(args)
+    if imported_meal.valid?
+      render json: imported_meal
     else
-      render json: meal_data.error
+      render json: imported_meal.errors.messages
     end
   end
 
