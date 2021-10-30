@@ -50,7 +50,7 @@ class MealsController < ApplicationController
   end
 
   def create
-    newMeal = Meal.new(meal_params(:title,:category,:area,:source,:instructions => [],:tags => [],:ingredients => {}))
+    newMeal = Meal.new(meal_params(:title, :category, :source, :instructions => [], :tags => [], :ingredients=>[]))
     if newMeal.save
       render json: newMeal
     else
@@ -83,7 +83,8 @@ class MealsController < ApplicationController
   private
 
   def meal_params(*args)
-    params.require(:meals)[0].permit(args)
+    params.require(:meals)[0].permit(args) if params.include?(:meals)
+    params.require(:meal).permit(args) if params.include?(:meal)
   end
   def getProvider()
     params.require(:provider)
