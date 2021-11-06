@@ -37,7 +37,7 @@ class MealsController < ApplicationController
   end
 
   def import #import from website, :scrape => [FoodNetwork]
-    url = params.require(:url)
+    url = meal_params(:source)[:source]
     data = Scrapers::FoodNetwork.grab(url)
     args={}
     Meal.new.attributes.symbolize_keys.each { |k,v| args[k]=data[k]}
