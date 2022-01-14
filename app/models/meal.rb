@@ -16,6 +16,19 @@ class Meal < ApplicationRecord
         :strMeasure13,:strMeasure14,:strMeasure15,:strMeasure16,:strMeasure17,:strMeasure18,:strMeasure19,:strMeasure20,:strSource]
     end
 
+    def compare_and_ignore_nils(mealObj)
+        Meal.attribute_names.each do |attribute|
+            next if mealObj[attribute].nil? or self[attribute].nil?
+            return false unless mealObj[attribute] == self[attribute]
+        end
+
+        return true
+    end
+
+
+        
+        
+
     def self.parseMealsDB(payload)
         mealObj={}
         mealObj["title"]=payload[:strMeal]

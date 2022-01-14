@@ -45,8 +45,21 @@ class MealsController < ApplicationController
     if imported_meal.valid?
       render json: imported_meal
     else
-      render json: imported_meal.errors.messages
+      if(Meal.exists?(:title => imported_meal.title)){
+        #Meal exists, check diff
+        storedMeal = Meal.find_by_title imported_meal.title
+        if storedMeal.compare_and_ignore_nils imported_meal
+          #TODO: error hnadling
+          imported_meal.errors.messages << "This meal already exists, import cancelled."
+        end
+
+        render json: storedMeal
+      }
+      
+      #Will be confirmationrender json: imported_meal.errors.messages
     end
+
+    render json: imported_meal.errors.message if imported_meal.errors.messages.any?
   end
 
   def create
@@ -54,6 +67,7 @@ class MealsController < ApplicationController
     if newMeal.save
       render json: newMeal
     else
+      newMeal.errors.message.
       render json: newMeal.errors.messages
     end
   end
