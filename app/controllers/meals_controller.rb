@@ -50,7 +50,8 @@ class MealsController < ApplicationController
         storedMeal = Meal.find_by_title imported_meal.title
         if storedMeal.compare_and_ignore_nils imported_meal
           #TODO: error hnadling
-          imported_meal.errors.messages << "This meal already exists, import cancelled."
+          storedMeal.errors.messages << "This meal already exists, import cancelled."
+          render json: storedMeal
         end
 
         render json: storedMeal
