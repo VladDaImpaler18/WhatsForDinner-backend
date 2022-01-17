@@ -38,6 +38,10 @@ class MealsController < ApplicationController
 
   def import #import from website, :scrape => [FoodNetwork]
     url = meal_params(:source)[:source]
+    if url.empty?
+      imported_meal.errors.messages << "URL empty"
+      render json: imported_meal
+    end
     data = Scrapers::FoodNetwork.grab(url)
     args={}
     Meal.new.attributes.symbolize_keys.each { |k,v| args[k]=data[k]}
@@ -45,7 +49,11 @@ class MealsController < ApplicationController
     if imported_meal.valid?
       render json: imported_meal
     else
-      if(Meal.exists?(:title => imported_meal.title)){
+      if imported_meal.empty?
+        imported_meal.errors.messages << ""
+        render: json: imported_meal
+      
+      elsif(Meal.exists?(:title => imported_meal.title))
         #Meal exists, check diff
         storedMeal = Meal.find_by_title imported_meal.title
         if storedMeal.compare_and_ignore_nils imported_meal
@@ -55,7 +63,7 @@ class MealsController < ApplicationController
         end
 
         render json: storedMeal
-      }
+      end
       
       #Will be confirmationrender json: imported_meal.errors.messages
     end
